@@ -1,0 +1,78 @@
+/* ═══════════════════════════════════════
+   GIA Aircraft Log System — login.css
+═══════════════════════════════════════ */
+
+#login-screen {
+  position: fixed; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 10000;
+  background: radial-gradient(ellipse at 50% 0%, rgba(0,119,170,0.15) 0%, transparent 60%), var(--navy);
+}
+
+.login-box {
+  width: 420px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.6);
+}
+
+.login-top {
+  padding: 32px 32px 24px;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+  background: linear-gradient(180deg, rgba(0,200,255,0.06) 0%, transparent 100%);
+}
+
+.login-badge {
+  width: 56px; height: 56px;
+  background: linear-gradient(135deg, var(--accent2), var(--accent));
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--sans); font-weight: 900; font-size: 16px; color: var(--navy);
+  margin: 0 auto 14px;
+}
+
+.login-title { font-family: var(--sans); font-weight: 900; font-size: 22px; letter-spacing: 3px; color: #fff; text-transform: uppercase; }
+.login-sub { font-family: var(--mono); font-size: 9px; color: var(--accent); letter-spacing: 2px; margin-top: 4px; text-transform: uppercase; }
+
+.login-body { padding: 28px 32px 32px; }
+
+.login-field { margin-bottom: 16px; }
+.login-field label { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; display: block; margin-bottom: 6px; }
+.login-field input,
+.login-field select {
+  width: 100%;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--mono); font-size: 13px;
+  padding: 10px 14px; border-radius: 2px; outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.login-field input:focus,
+.login-field select:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,200,255,0.1); }
+.login-field input::placeholder { color: var(--muted); opacity: .6; }
+.login-field select option { background: var(--panel); }
+
+.login-error {
+  font-family: var(--mono); font-size: 10px; color: var(--red); letter-spacing: 1px;
+  margin-bottom: 12px; padding: 8px 12px;
+  background: rgba(255,64,96,0.08); border: 1px solid rgba(255,64,96,0.2); border-radius: 2px;
+  display: none;
+}
+.login-error.show { display: block; }
+
+.btn-login {
+  width: 100%;
+  background: var(--accent); color: var(--navy);
+  font-family: var(--sans); font-weight: 900; font-size: 13px;
+  letter-spacing: 3px; text-transform: uppercase;
+  padding: 12px; border: none; cursor: pointer; border-radius: 2px;
+  transition: all .15s; margin-top: 4px;
+}
+.btn-login:hover { background: #33d6ff; box-shadow: 0 4px 20px rgba(0,200,255,0.3); }
+
+.login-hint { font-family: var(--mono); font-size: 9px; color: var(--muted); text-align: center; margin-top: 16px; line-height: 1.7; letter-spacing: .5px; }
+.login-hint b { color: var(--accent); }

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GIA — Aircraft Log Management System</title>
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/login.css">
+<link rel="stylesheet" href="css/dashboard.css">
+<link rel="stylesheet" href="css/components.css">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ════════════ LOGIN SCREEN ════════════ -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-top">
+      <div class="login-badge">GIA</div>
+      <div class="login-title">Gambia International Airlines</div>
+      <div class="login-sub">Aircraft Log Management System · Secure Access</div>
+    </div>
+    <div class="login-body">
+      <div class="login-error" id="login-error">Invalid username or password. Please try again.</div>
+      <div class="login-field">
+        <label>Username</label>
+        <input type="text" id="login-user" placeholder="Enter your username" autocomplete="username">
+      </div>
+      <div class="login-field">
+        <label>Password</label>
+        <input type="password" id="login-pass" placeholder="Enter your password" autocomplete="current-password">
+      </div>
+      <div class="login-field">
+        <label>Role</label>
+        <select id="login-role">
+          <option value="">— Select your role —</option>
+          <option value="admin">Administrator</option>
+          <option value="supervisor">Supervisor</option>
+          <option value="staff">Ground Staff</option>
+        </select>
+      </div>
+      <button class="btn-login" id="btn-login">▶ SIGN IN</button>
+      <div class="login-hint">
+        Demo credentials:<br>
+        <b>admin</b> / admin123 &nbsp;|&nbsp; <b>supervisor</b> / sup123 &nbsp;|&nbsp; <b>staff</b> / staff123
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════ SESSION WARNING ════════════ -->
+<div class="session-warning" id="session-warning">
+  ⚠ Your session will expire in <span id="session-countdown">5:00</span>. Click anywhere to stay signed in.
+</div>
+
+<!-- ════════════ APP SHELL ════════════ -->
+<div id="app-shell" style="display:none">
+
+  <header>
+    <div class="logo">
+      <div class="logo-badge">GIA</div>
+      <div class="logo-text">
+        <div class="airline">Gambia International Airlines</div>
+        <div class="subtitle">Aircraft Log Management System · v2.0</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="clock" id="clock">--:--:-- UTC</div>
+      <div class="status-dot">SECURE SESSION</div>
+      <div class="user-chip" id="user-chip">
+        <div class="user-avatar" id="header-avatar">?</div>
+        <div>
+          <div class="user-name" id="header-username">—</div>
+          <div class="user-role" id="header-role">—</div>
+        </div>
+      </div>
+      <button class="btn-logout" id="btn-logout">⏻ LOGOUT</button>
+    </div>
+  </header>
+
+  <div class="app">
+    <nav id="sidebar">
+      <div class="nav-section">Main</div>
+      <div class="nav-item active" id="nav-dashboard" data-page="dashboard"><span class="icon">▦</span> Dashboard</div>
+      <div class="nav-item" id="nav-new-log" data-page="new-log"><span class="icon">＋</span> New Log Entry</div>
+      <div class="nav-item" id="nav-log-list" data-page="log-list"><span class="icon">☰</span> Log Records <span class="nav-badge" id="log-count-badge">0</span></div>
+      <div class="nav-section" style="margin-top:8px">Reports</div>
+      <div class="nav-item" id="nav-pax-report" data-page="pax-report"><span class="icon">◎</span> PAX Summary</div>
+      <div class="nav-item" id="nav-frt-report" data-page="frt-report"><span class="icon">◈</span> Freight Report</div>
+      <hr class="nav-divider">
+      <div class="nav-section">Admin</div>
+      <div class="nav-item hidden" id="nav-users" data-page="users"><span class="icon">👤</span> User Management</div>
+      <div class="nav-item" id="nav-audit" data-page="audit"><span class="icon">📋</span> Audit Trail</div>
+    </nav>
+
+    <main>
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Operations <span>Dashboard</span></div>
+            <div class="page-meta" id="dash-date">—</div>
+          </div>
+        </div>
+        <div class="stats-row">
+          <div class="stat-card"><div class="stat-label">Total Logs</div><div class="stat-value blue" id="stat-total">0</div><div class="stat-sub">entries recorded</div></div>
+          <div class="stat-card"><div class="stat-label">Total PAX (ARR)</div><div class="stat-value" id="stat-pax">0</div><div class="stat-sub">arriving passengers</div></div>
+          <div class="stat-card"><div class="stat-label">Total Freight In</div><div class="stat-value green" id="stat-frt">0 kg</div><div class="stat-sub">inbound cargo</div></div>
+          <div class="stat-card"><div class="stat-label">Active Users</div><div class="stat-value amber" id="stat-users">0</div><div class="stat-sub">registered accounts</div></div>
+        </div>
+        <div class="dash-grid">
+          <div class="chart-card">
+            <div class="chart-header">PAX by Destination</div>
+            <div class="chart-body" id="dest-chart"><div class="empty-msg">No data.</div></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-header">Recent Log Entries</div>
+            <div class="chart-body" id="recent-list"><div class="empty-msg">No logs.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NEW LOG -->
+      <div class="page" id="page-new-log">
+        <div class="page-header">
+          <div><div class="page-title">New <span>Log Entry</span></div><div class="page-meta">Aircraft arrival / departure record</div></div>
+          <button class="btn btn-secondary" id="btn-clear-form">↺ Clear</button>
+        </div>
+        <div class="form-card">
+          <div class="form-section-header">Aircraft & Flight Info</div>
+          <div class="form-grid cols-4">
+            <div class="field"><label>A/C Type</label><input type="text" id="f-actype" placeholder="e.g. A330"></div>
+            <div class="field"><label>Registration</label><input type="text" id="f-reg" placeholder="e.g. TC-LNG"></div>
+            <div class="field"><label>Flight No.</label><input type="text" id="f-flt" placeholder="e.g. TK571"></div>
+            <div class="field"><label>Date</label><input type="date" id="f-date"></div>
+          </div>
+        </div>
+        <div class="form-card">
+          <div class="form-section-header">Schedule & Timings</div>
+          <div class="form-grid cols-4">
+            <div class="field"><label>STA</label><input type="time" id="f-sta"></div>
+            <div class="field"><label>ATA</label><input type="time" id="f-ata"></div>
+            <div class="field"><label>STD</label><input type="time" id="f-std"></div>
+            <div class="field"><label>ATD</label><input type="time" id="f-atd"></div>
+            <div class="field"><label>SGT (mins)</label><input type="number" id="f-sgt" placeholder="90"></div>
+            <div class="field"><label>AGT (mins)</label><input type="number" id="f-agt" placeholder="62"></div>
+            <div class="field"><label>Destination</label><input type="text" id="f-dest" placeholder="e.g. IST"></div>
+            <div class="field"><label>HCN</label><input type="text" id="f-hcn" placeholder="e.g. 54424"></div>
+          </div>
+        </div>
+        <div class="form-card">
+          <div class="form-section-header">Passenger Manifest</div>
+          <div class="pax-table-wrap">
+            <table class="pax-table">
+              <thead><tr><th>Row</th><th>ARR PAX</th><th>DEP PAX</th><th>TRN PAX</th></tr></thead>
+              <tbody>
+                <tr><td class="row-label">Row 1</td><td><input type="number" class="arr-pax" placeholder="0"></td><td><input type="number" class="dep-pax" placeholder="0"></td><td><input type="number" class="trn-pax" placeholder="0"></td></tr>
+                <tr><td class="row-label">Row 2</td><td><input type="number" class="arr-pax" placeholder="0"></td><td><input type="number" class="dep-pax" placeholder="0"></td><td><input type="number" class="trn-pax" placeholder="0"></td></tr>
+                <tr><td class="row-label">Row 3</td><td><input type="number" class="arr-pax" placeholder="0"></td><td><input type="number" class="dep-pax" placeholder="0"></td><td><input type="number" class="trn-pax" placeholder="0"></td></tr>
+                <tr><td class="row-label">Row 4</td><td><input type="number" class="arr-pax" placeholder="0"></td><td><input type="number" class="dep-pax" placeholder="0"></td><td><input type="number" class="trn-pax" placeholder="0"></td></tr>
+                <tr class="total-row"><td>TOTAL</td><td id="tot-arr">0</td><td id="tot-dep">0</td><td id="tot-trn">0</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="form-card">
+          <div class="form-section-header">Freight & Meals</div>
+          <div class="form-grid cols-4">
+            <div class="field"><label>FRT IN (kg)</label><input type="number" id="f-frtin" placeholder="0"></div>
+            <div class="field"><label>FRT OUT (kg)</label><input type="number" id="f-frtout" placeholder="0"></div>
+            <div class="field"><label>TRN FRT (kg)</label><input type="number" id="f-trnfrt" placeholder="0"></div>
+            <div class="field"><label>Shift</label><select id="f-shift"><option value="A">Shift A</option><option value="B" selected>Shift B</option><option value="C">Shift C</option></select></div>
+            <div class="field"><label>MLS IN</label><input type="number" id="f-mlsin" placeholder="0"></div>
+            <div class="field"><label>MLS OUT</label><input type="number" id="f-mlsout" placeholder="0"></div>
+            <div class="field"><label>TRN MLS</label><input type="text" id="f-trnmls" placeholder="NIL"></div>
+          </div>
+        </div>
+        <div class="form-card">
+          <div class="form-section-header">Remarks</div>
+          <div class="form-grid cols-1">
+            <div class="field"><label>Remarks / Notes</label><textarea id="f-remarks" placeholder="Enter any operational remarks..."></textarea></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;margin-bottom:32px">
+          <button class="btn btn-primary" id="btn-save-log">▶ Save Log Entry</button>
+          <button class="btn btn-secondary" id="btn-reset-form">Clear</button>
+        </div>
+      </div>
+
+      <!-- LOG LIST -->
+      <div class="page" id="page-log-list">
+        <div class="page-header">
+          <div><div class="page-title">Log <span>Records</span></div><div class="page-meta">All aircraft log entries</div></div>
+        </div>
+        <div class="table-toolbar">
+          <input class="search-input" type="text" placeholder="Search flight, reg, destination..." id="search-input">
+          <select class="filter-select" id="filter-ac"><option value="">All A/C Types</option></select>
+          <select class="filter-select" id="filter-shift"><option value="">All Shifts</option><option value="A">Shift A</option><option value="B">Shift B</option><option value="C">Shift C</option></select>
+          <select class="filter-select" id="filter-user"><option value="">All Users</option></select>
+        </div>
+        <div class="form-card" style="margin-bottom:0">
+          <table class="log-table">
+            <thead><tr><th>Date</th><th>Flight</th><th>A/C</th><th>Reg</th><th>Dest</th><th>ARR PAX</th><th>DEP PAX</th><th>FRT IN</th><th>Shift</th><th>Logged By</th><th>Status</th><th></th></tr></thead>
+            <tbody id="log-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PAX REPORT -->
+      <div class="page" id="page-pax-report">
+        <div class="page-header"><div><div class="page-title">PAX <span>Summary</span></div><div class="page-meta">Passenger movement report</div></div></div>
+        <div class="form-card">
+          <div class="form-section-header">Passenger Totals by Destination</div>
+          <div id="pax-report-body" style="padding:20px;font-family:var(--mono);font-size:11px;color:var(--muted)">No data.</div>
+        </div>
+      </div>
+
+      <!-- FRT REPORT -->
+      <div class="page" id="page-frt-report">
+        <div class="page-header"><div><div class="page-title">Freight <span>Report</span></div><div class="page-meta">Cargo movement summary</div></div></div>
+        <div class="form-card">
+          <div class="form-section-header">Freight Summary by Flight</div>
+          <div id="frt-report-body" style="padding:20px;font-family:var(--mono);font-size:11px;color:var(--muted)">No data.</div>
+        </div>
+      </div>
+
+      <!-- USER MANAGEMENT -->
+      <div class="page" id="page-users">
+        <div class="page-header">
+          <div><div class="page-title">User <span>Management</span></div><div class="page-meta">Manage system accounts and permissions</div></div>
+          <button class="btn btn-primary" id="btn-add-user">＋ Add User</button>
+        </div>
+        <div id="users-list"></div>
+      </div>
+
+      <!-- AUDIT TRAIL -->
+      <div class="page" id="page-audit">
+        <div class="page-header">
+          <div><div class="page-title">Audit <span>Trail</span></div><div class="page-meta">Full system activity log</div></div>
+          <button class="btn btn-secondary" id="clear-audit-btn" style="display:none">✕ Clear Log</button>
+        </div>
+        <div class="form-card" style="margin-bottom:0">
+          <div class="form-section-header">System Events</div>
+          <div id="audit-list" style="padding:0 20px 20px;max-height:600px;overflow-y:auto"></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- DETAIL PANEL -->
+<div class="detail-panel" id="detail-panel">
+  <div class="detail-header">
+    <div>
+      <div class="detail-flt" id="dp-flt">—</div>
+      <div style="font-family:var(--mono);font-size:9px;color:var(--muted);margin-top:2px" id="dp-sub">Aircraft Log Detail</div>
+    </div>
+    <button class="detail-close" id="btn-close-detail">✕ CLOSE</button>
+  </div>
+  <div class="detail-body" id="dp-body"></div>
+</div>
+
+<!-- ADD USER MODAL -->
+<div class="modal-overlay" id="add-user-modal">
+  <div class="modal-box">
+    <div class="modal-header">Add New User</div>
+    <div class="modal-body">
+      <div class="form-grid cols-1" style="padding:0">
+        <div class="field"><label>Full Name</label><input type="text" id="nu-name" placeholder="e.g. Amadou Jallow"></div>
+        <div class="field"><label>Username</label><input type="text" id="nu-user" placeholder="e.g. ajallow"></div>
+        <div class="field"><label>Password</label><input type="password" id="nu-pass" placeholder="Set a password"></div>
+        <div class="field"><label>Role</label>
+          <select id="nu-role"><option value="staff">Ground Staff</option><option value="supervisor">Supervisor</option><option value="admin">Administrator</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-close-modal="add-user-modal">Cancel</button>
+      <button class="btn btn-primary" id="btn-create-user">▶ Create User</button>
+    </div>
+  </div>
+</div>
+
+<!-- CONFIRM MODAL -->
+<div class="modal-overlay" id="confirm-modal">
+  <div class="modal-box">
+    <div class="modal-header" id="confirm-title">Confirm Action</div>
+    <div class="modal-body"><div id="confirm-msg" style="font-family:var(--mono);font-size:12px;color:var(--text);line-height:1.7"></div></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" data-close-modal="confirm-modal">Cancel</button>
+      <button class="btn btn-danger" id="confirm-ok-btn">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✓ Done</div>
+
+<script src="js/data.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/logs.js"></script>
+<script src="js/users.js"></script>
+<script src="js/reports.js"></script>
+<script src="js/audit.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
